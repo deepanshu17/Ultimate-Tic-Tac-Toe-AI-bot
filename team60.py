@@ -73,7 +73,30 @@ def update_board_stat(board, board_stat, move):
     block = get_block(block_number, board)
     print_block(block)
     #print_board_stat(board_stat)
-    return board_stat
+
+    board_stat_new = copy.deepcopy(board_stat)
+
+    new_flag = 0
+    for i in range(9) :
+            if block[i] == '-' :
+                new_flag = 1
+    
+    if new_flag == 1 :
+            board_stat_new[block_number] = '-'
+
+    elif block[0:3] == ['x', 'x', 'x' ] or block[3:6] == ['x', 'x', 'x' ] or block[6:9] == ['x', 'x', 'x' ] or block[0::3] == ['x', 'x', 'x' ] or block[3::6] == ['x', 'x', 'x' ] or block[6::9] == ['x', 'x', 'x' ] or block[0::4] == ['x', 'x', 'x' ] or block[2:7:2] == ['x', 'x', 'x' ] :
+        board_stat_new[block_number] = 'x'
+
+    elif block[0:3] == ['o', 'o', 'o' ] or block[3:6] == ['o', 'o', 'o' ] or block[6:9] == ['o', 'o', 'o' ] or block[0::3] == ['o', 'o', 'o' ] or block[3::6] == ['o', 'o', 'o' ] or block[6::9] == ['o', 'o', 'o' ] or block[0::4] == ['o', 'o', 'o' ] or block[2:7:2] == ['o', 'o', 'o' ] :
+        board_stat_new[block_number] = 'o'
+    
+    else:
+        board_stat_new[block_number] = 'D'
+
+    print_board_stat(board_stat_new)
+
+    return board_stat_new
+
 
 def get_block_number(move):
     x = move[0]
@@ -102,7 +125,7 @@ def get_block_number(move):
                  
 
 def print_board_stat(bs):
-    print "=========== Block Status ========="
+    print "=========== Block Status NEW========="
     for i in range(0, 9, 3): 
         print bs[i] + " " + bs[i+1] + " " + bs[i+2] 
     print "=================================="
@@ -228,3 +251,4 @@ def get_allowed_cells(blocks, board):
                     allowed_cells.append((i + (block/3)*3, j + (block%3)*3))
 
     return allowed_cells
+
