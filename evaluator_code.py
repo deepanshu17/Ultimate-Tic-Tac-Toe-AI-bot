@@ -166,6 +166,10 @@ def check_valid_move(game_board, block_stat, current_move, old_move):
 	blocks_allowed  = determine_blocks_allowed(old_move, block_stat)
 	# We get all the empty cells in allowed blocks. If they're all full, we get all the empty cells in the entire board.
 	cells = get_empty_out_of(game_board, blocks_allowed, block_stat)
+        print "^^^^^^^^^^^^^^^^^^^^^^"
+        print cells
+        print_lists(game_board, block_stat)
+        print "^^^^^^^^^^^^^^^^^^^^^^"
 	#Checks if you made a valid move. 
 	if current_move in cells:
 		return True
@@ -389,7 +393,7 @@ def simulate(obj1,obj2):
 if __name__ == '__main__':
 	## get game playing objects
 
-	if len(sys.argv) != 2:
+	if len(sys.argv) < 2:
 		print 'Usage: python simulator.py <option>'
 		print '<option> can be 1 => Random player vs. Random player'
 		print '                2 => Human vs. Random Player'
@@ -399,7 +403,13 @@ if __name__ == '__main__':
  
 	obj1 = ''
 	obj2 = ''
-	option = sys.argv[1]	
+	option = sys.argv[1]
+        try:
+            toss = sys.argv[2]
+        except IndexError:
+            "toss value not given"
+            toss = None
+            pass
 	if option == '1':
 		obj1 = Player1()
 		obj2 = Player2()
@@ -416,11 +426,14 @@ if __name__ == '__main__':
 	else:
 		print 'Invalid option'
 		sys.exit(1)
-
-	num = random.uniform(0,1)
-	if num > 0.5:
-		simulate(obj2, obj1)
-	else:
+        
+        if toss:
+	    simulate(obj2, obj1)
+        else:
+	    num = random.uniform(0,1)
+	    if num > 0.5:
+	        simulate(obj2, obj1)
+	    else:
 		simulate(obj1, obj2)
 		
 	
