@@ -1,5 +1,7 @@
 import random
 import copy
+import pdb
+
 class Player60:
     def __init__(self):
         # initialization
@@ -10,6 +12,7 @@ class Player60:
 
         print old_move
         print flag
+        """
         allowed_blocks = get_free_and_valid_blocks(old_move, temp_block)
     
         cells = get_allowed_cells(allowed_blocks, temp_board)
@@ -26,6 +29,8 @@ class Player60:
                 best_score = score
                 best_move = cell
             break 
+        """
+        best_move = minimax(old_move, temp_board, temp_block, flag)
 
         print "+++++++++++++++++++++++++++++++++++++++"
         print best_move
@@ -36,6 +41,76 @@ def get_score(board):
     #print_board(board)
     return 10
 
+def minimax(old_move, board, board_stat, flag):
+    allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
+    cells = get_allowed_cells(allowed_blocks, board)
+    best_score = float('-inf')
+    best_move = cells[0]
+
+    opp_flag = 'x' if flag == 'o' else 'o'
+
+    for cell in cells:
+        board_copy = copy.deepcopy(board)
+        board_stat_copy = copy.deepcopy(board_stat)
+        future_board = max_move(board_copy, cell, flag)
+        future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        #score = get_score(future_board)
+        score = min_play(cell, future_board, future_board_stat, opp_flag, 0)
+        if score > best_score:
+            best_score = score
+            best_move = cell
+
+    return best_move
+
+def min_play(old_move, board, board_stat, flag, depth):
+    if (depth > 2):
+        return get_score(board)
+    allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
+    cells = get_allowed_cells(allowed_blocks, board)
+    best_score = float('-inf')
+    best_move = cells[0]
+
+    opp_flag = 'x' if flag == 'o' else 'o'
+
+    for cell in cells:
+        board_copy = copy.deepcopy(board)
+        board_stat_copy = copy.deepcopy(board_stat)
+        future_board = min_move(board_copy, cell, flag)
+        future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        #score = get_score(future_board)
+        score = max_play(cell, future_board, future_board_stat, opp_flag, depth+1)
+        if score < best_score:
+            best_score = score
+            best_move = cell
+    return best_score
+
+def max_play(old_move, board, board_stat, flag, depth):
+    #print_board(board)
+    #pdb.set_trace()
+    #print "---------------------------------------"
+    #if (depth > 0):
+    #    return get_score(board)
+    allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
+    cells = get_allowed_cells(allowed_blocks, board)
+    #print cells
+    best_score = float('-inf')
+    best_move = cells[0]
+
+    opp_flag = 'x' if flag == 'o' else 'o'
+
+    for cell in cells:
+        board_copy = copy.deepcopy(board)
+        board_stat_copy = copy.deepcopy(board_stat)
+        future_board = max_move(board, cell, flag)
+        future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        #score = get_score(future_board)
+        score = min_play(cell, future_board, future_board_stat, opp_flag, depth+2)
+        if score > best_score:
+            best_score = score
+            best_move = cell
+    return best_score
+
+"""
 def minimax(board, move, flag, board_stat):
     board = max_move(board, move, flag)
     board_stat = update_board_stat(board, board_stat, move)
@@ -49,6 +124,7 @@ def minimax(board, move, flag, board_stat):
     print "************************"
     board = min_move(board, move, opp_flag)
     return board
+"""
 
 def max_move(board, move, flag):
     x = move[0]
@@ -67,11 +143,11 @@ def min_move(board, move, flag):
 
 def update_board_stat(board, board_stat, move):
     # update board stat 
-    print move
+    #print move
     block_number = get_block_number(move)
-    print block_number
+    #print block_number
     block = get_block(block_number, board)
-    print_block(block)
+    #print_block(block)
     #print_board_stat(board_stat)
     return board_stat
 
@@ -217,7 +293,7 @@ def is_empty_cell(cell, block):
     return block[index] == '-'
 
 def get_allowed_cells(blocks, board):
-    print blocks
+    #print blocks
     allowed_cells = []
     for block in blocks:
         block_stat = get_block(block, board)
