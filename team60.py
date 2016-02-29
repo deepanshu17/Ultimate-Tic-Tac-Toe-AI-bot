@@ -1,4 +1,5 @@
 import random
+import copy
 class Player60:
     def __init__(self):
         # initialization
@@ -16,7 +17,7 @@ class Player60:
         print cells
         best_score = float('-inf')
         best_move = cells[0]
-        board_copy = list(temp_board)
+        board_copy = copy.deepcopy(temp_board)
 
         for cell in cells:
             future_board = minimax(board_copy, cell, flag, temp_block)
@@ -28,8 +29,6 @@ class Player60:
 
         print "+++++++++++++++++++++++++++++++++++++++"
         print best_move
-        print type(best_move[0])
-        print type(best_move[1])
         print 
         return best_move
 
@@ -44,10 +43,11 @@ def minimax(board, move, flag, board_stat):
     return board
     opp_flag = 'x' if flag == 'o' else 'o'
     allowed_blocks = get_free_and_valid_blocks(move, board_stat)
+    cells = get_allowed_cells(allowed_blocks, board)
     print "************************"
     print allowed_blocks
     print "************************"
-    borad = min_move(board, move, opp_flag)
+    board = min_move(board, move, opp_flag)
     return board
 
 def max_move(board, move, flag):

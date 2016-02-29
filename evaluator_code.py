@@ -166,10 +166,6 @@ def check_valid_move(game_board, block_stat, current_move, old_move):
 	blocks_allowed  = determine_blocks_allowed(old_move, block_stat)
 	# We get all the empty cells in allowed blocks. If they're all full, we get all the empty cells in the entire board.
 	cells = get_empty_out_of(game_board, blocks_allowed, block_stat)
-        print "^^^^^^^^^^^^^^^^^^^^^^"
-        print cells
-        print_lists(game_board, block_stat)
-        print "^^^^^^^^^^^^^^^^^^^^^^"
 	#Checks if you made a valid move. 
 	if current_move in cells:
 		return True
