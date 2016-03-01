@@ -63,12 +63,17 @@ def minimax(old_move, board, board_stat, flag):
     return best_move
 
 def min_play(old_move, board, board_stat, flag, depth):
-    if (depth > 2):
+    if (depth > 3):
         return get_score(board)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
-    best_move = cells[0]
+    try:
+        best_move = cells[0]
+    except IndexError:
+        print "index error"
+        #pdb.set_trace()
+        return get_score(board)
 
     opp_flag = 'x' if flag == 'o' else 'o'
 
@@ -85,16 +90,16 @@ def min_play(old_move, board, board_stat, flag, depth):
     return best_score
 
 def max_play(old_move, board, board_stat, flag, depth):
-    #print_board(board)
-    #pdb.set_trace()
-    #print "---------------------------------------"
-    #if (depth > 0):
-    #    return get_score(board)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     #print cells
     best_score = float('-inf')
-    best_move = cells[0]
+    try:
+        best_move = cells[0]
+    except IndexError:
+        print "index error"
+        #pdb.set_trace()
+        return get_score(board)
 
     opp_flag = 'x' if flag == 'o' else 'o'
 
@@ -169,7 +174,7 @@ def update_board_stat(board, board_stat, move):
     else:
         board_stat_new[block_number] = 'D'
 
-    print_board_stat(board_stat_new)
+    #print_board_stat(board_stat_new)
 
     return board_stat_new
 

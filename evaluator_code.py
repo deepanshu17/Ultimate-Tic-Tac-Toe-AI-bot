@@ -20,6 +20,9 @@ import traceback
 
 from team60 import Player60
 
+class TimedOutExc(Exception):
+        pass
+
 def handler(signum, frame):
     #print 'Signal handler called with signal', signum
     raise TimedOutExc()
@@ -187,8 +190,6 @@ def update_lists(game_board, block_stat, move_ret, fl):
 			if game_board[i][j] == '-':
 				flag = 1
 
-	if flag == 0:
-		block_stat[block_no] = 'D'
 
 	if block_stat[block_no] == '-':
 		if game_board[id1*3][id2*3] == game_board[id1*3+1][id2*3+1] and game_board[id1*3+1][id2*3+1] == game_board[id1*3+2][id2*3+2] and game_board[id1*3+1][id2*3+1] != '-' and game_board[id1*3+1][id2*3+1] != 'D':
@@ -205,6 +206,8 @@ def update_lists(game_board, block_stat, move_ret, fl):
                         if game_board[i][id2*3]==game_board[i][id2*3+1] and game_board[i][id2*3+1] == game_board[i][id2*3+2] and game_board[i][id2*3] != '-' and game_board[i][id2*3] != 'D':
                                 mflg = 1
                                 break
+	if flag == 0:
+		block_stat[block_no] = 'D'
 	if mflg == 1:
 		block_stat[block_no] = fl
 	
@@ -296,7 +299,7 @@ def simulate(obj1,obj2):
 
 	WINNER = ''
 	MESSAGE = ''
-	TIMEALLOWED = 12000
+	TIMEALLOWED = 12
 	p1_pts=0
 	p2_pts=0
 
@@ -309,15 +312,13 @@ def simulate(obj1,obj2):
 	
 		signal.signal(signal.SIGALRM, handler)
 		signal.alarm(TIMEALLOWED)
-		#ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
+#		ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
 
 		try:
 			ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
-		except Exception,e :
-                        print e
-                        traceback.print_exc()
+		except:
 			WINNER, MESSAGE = decide_winner_and_get_message('P1', 'L',   'TIMED OUT')
-			print MESSAGE
+		#	print MESSAGE
 			break
 		signal.alarm(0)
 	
@@ -354,9 +355,7 @@ def simulate(obj1,obj2):
 
         	try:
            		ret_move_pl2 = pl2.move(temp_board_state, temp_block_stat, old_move, pl2_fl)
-		except Exception,e :
-                        traceback.print_exc()
-                        print e
+        	except:
 			WINNER, MESSAGE = decide_winner_and_get_message('P2', 'L',   'TIMED OUT')
 			break
         	signal.alarm(0)
@@ -394,18 +393,15 @@ if __name__ == '__main__':
 		print '<option> can be 1 => Random player vs. Random player'
 		print '                2 => Human vs. Random Player'
 		print '                3 => Human vs. Human'
-		print '                4 => Team 60'
 		sys.exit(1)
  
 	obj1 = ''
 	obj2 = ''
-	option = sys.argv[1]
+	option = sys.argv[1]	
         try:
             toss = sys.argv[2]
         except IndexError:
-            "toss value not given"
             toss = None
-            pass
 	if option == '1':
 		obj1 = Player1()
 		obj2 = Player2()
@@ -422,14 +418,18 @@ if __name__ == '__main__':
 	else:
 		print 'Invalid option'
 		sys.exit(1)
-        
+
         if toss:
-	    simulate(obj2, obj1)
+            simulate(obj2, obj1)
+
         else:
-	    num = random.uniform(0,1)
-	    if num > 0.5:
-	        simulate(obj2, obj1)
-	    else:
+            simulate(obj1,obj2)
+        """
+	num = random.uniform(0,1)
+	if num > 0.5:
+		simulate(obj2, obj1)
+	else:
 		simulate(obj1, obj2)
+        """
 		
 	
