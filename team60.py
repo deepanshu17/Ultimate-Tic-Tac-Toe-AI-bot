@@ -37,9 +37,141 @@ class Player60:
         print 
         return best_move
 
+def calc_score(m2,m1,m0):
+    if m2 == 3 :
+        score = -100
+    elif m2 == 2 and m0 == 1 :
+        score = -50
+    elif m1 == 2 and m0 == 1 :
+        score = 50
+    elif m1 == 3 :
+        score = 100
+    else :
+        score = 0
+
+    return score
+
 def get_score(board):
     #print_board(board)
-    return 10
+    m2 = m1 = m0 = 0
+    s = -200
+    final_score = 0
+    
+    for i in range(9):
+        block = get_block(i,board)
+
+        for j in range(3):
+            if block[3*j] =='o' :
+                m2 = m2+1
+            elif block[3*j] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1
+
+            if block[3*j+1] =='o' :
+                m2 = m2+1
+            elif block[3*j+1] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1            
+
+            if block[3*j+2] =='o' :
+                m2 = m2+1
+            elif block[3*j+2] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1
+
+            ts = calc_score(m2, m1, m0)
+            if ts > s :
+                s = ts
+            m2 = m1 = m0 = 0
+
+
+        for j in range(3):
+            if block[j] =='o' :
+                m2 = m2+1
+            elif block[j] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1
+
+            if block[j+3] =='o' :
+                m2 = m2+1
+            elif block[j+3] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1
+
+            if block[j+6] =='o' :
+                m2 = m2+1
+            elif block[j+6] =='x' :
+                m1 = m1 + 1
+            else:
+                m0 = m0 + 1
+
+            ts = calc_score(m2, m1, m0)
+            if ts > s:
+                s = ts
+            m2 = m1 = m0 = 0
+
+
+        if block[0] == 'o':
+            m2 = m2 + 1
+        elif block[0] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        if block[4] == 'o':
+            m2 = m2 + 1
+        elif block[4] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        if block[8] == 'o':
+            m2 = m2 + 1
+        elif block[8] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        ts = calc_score(m2, m1, m0)
+        if ts > s:
+            s = ts
+        m2 = m1 = m0 = 0
+
+
+        if block[2] == 'o':
+            m2 = m2 + 1
+        elif block[2] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        if block[4] == 'o':
+            m2 = m2 + 1
+        elif block[4] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        if block[6] == 'o':
+            m2 = m2 + 1
+        elif block[6] == 'x':
+            m1 = m1 + 1
+        else:
+            m0 = m0 + 1
+
+        ts = calc_score(m2, m1, m0)
+        if ts > s:
+            s = ts        
+        m2 = m1 = m0 = 0
+
+        final_score += s
+
+    return final_score
 
 def minimax(old_move, board, board_stat, flag):
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
@@ -54,7 +186,7 @@ def minimax(old_move, board, board_stat, flag):
         board_stat_copy = copy.deepcopy(board_stat)
         future_board = max_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
-        #score = get_score(future_board)
+        #score = `ore(future_board)
         score = min_play(cell, future_board, future_board_stat, opp_flag, 0)
         if score > best_score:
             best_score = score
@@ -169,7 +301,7 @@ def update_board_stat(board, board_stat, move):
     else:
         board_stat_new[block_number] = 'D'
 
-    print_board_stat(board_stat_new)
+    # print_board_stat(board_stat_new)
 
     return board_stat_new
 
