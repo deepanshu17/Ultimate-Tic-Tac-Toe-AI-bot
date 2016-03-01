@@ -19,6 +19,9 @@ import signal
 import traceback
 
 from team60 import Player60
+from team3 import Player3
+from team7 import Player7
+from team30 import Player30
 
 class TimedOutExc(Exception):
         pass
@@ -414,6 +417,12 @@ if __name__ == '__main__':
 		obj2 = ManualPlayer()
 	elif option == '4':
 		obj1 = Player1()
+		obj2 = Player60()
+	elif option == '5':
+		obj1 = Player7()
+		obj2 = Player60()
+	elif option == '6':
+		obj1 = Player30()
 		obj2 = Player60()
 	else:
 		print 'Invalid option'

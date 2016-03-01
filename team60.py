@@ -51,7 +51,8 @@ def calc_score(m2,m1,m0):
 
     return score
 
-def get_score(board):
+def get_score(board, flag):
+    opp_flag = 'x' if flag == 'o' else 'o'
     #print_board(board)
     m2 = m1 = m0 = 0
     s = -200
@@ -61,23 +62,23 @@ def get_score(board):
         block = get_block(i,board)
 
         for j in range(3):
-            if block[3*j] =='o' :
+            if block[3*j] ==opp_flag :
                 m2 = m2+1
-            elif block[3*j] =='x' :
+            elif block[3*j] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1
 
-            if block[3*j+1] =='o' :
+            if block[3*j+1] ==opp_flag :
                 m2 = m2+1
-            elif block[3*j+1] =='x' :
+            elif block[3*j+1] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1            
 
-            if block[3*j+2] =='o' :
+            if block[3*j+2] ==opp_flag :
                 m2 = m2+1
-            elif block[3*j+2] =='x' :
+            elif block[3*j+2] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1
@@ -89,23 +90,23 @@ def get_score(board):
 
 
         for j in range(3):
-            if block[j] =='o' :
+            if block[j] ==opp_flag :
                 m2 = m2+1
-            elif block[j] =='x' :
+            elif block[j] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1
 
-            if block[j+3] =='o' :
+            if block[j+3] ==opp_flag :
                 m2 = m2+1
-            elif block[j+3] =='x' :
+            elif block[j+3] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1
 
-            if block[j+6] =='o' :
+            if block[j+6] ==opp_flag :
                 m2 = m2+1
-            elif block[j+6] =='x' :
+            elif block[j+6] ==flag :
                 m1 = m1 + 1
             else:
                 m0 = m0 + 1
@@ -116,23 +117,23 @@ def get_score(board):
             m2 = m1 = m0 = 0
 
 
-        if block[0] == 'o':
+        if block[0] == opp_flag:
             m2 = m2 + 1
-        elif block[0] == 'x':
+        elif block[0] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
 
-        if block[4] == 'o':
+        if block[4] == opp_flag:
             m2 = m2 + 1
-        elif block[4] == 'x':
+        elif block[4] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
 
-        if block[8] == 'o':
+        if block[8] == opp_flag:
             m2 = m2 + 1
-        elif block[8] == 'x':
+        elif block[8] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
@@ -143,23 +144,23 @@ def get_score(board):
         m2 = m1 = m0 = 0
 
 
-        if block[2] == 'o':
+        if block[2] == opp_flag:
             m2 = m2 + 1
-        elif block[2] == 'x':
+        elif block[2] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
 
-        if block[4] == 'o':
+        if block[4] == opp_flag:
             m2 = m2 + 1
-        elif block[4] == 'x':
+        elif block[4] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
 
-        if block[6] == 'o':
+        if block[6] == opp_flag:
             m2 = m2 + 1
-        elif block[6] == 'x':
+        elif block[6] == flag:
             m1 = m1 + 1
         else:
             m0 = m0 + 1
@@ -195,8 +196,9 @@ def minimax(old_move, board, board_stat, flag):
     return best_move
 
 def min_play(old_move, board, board_stat, flag, depth):
-    if (depth > 3):
-        return get_score(board)
+    opp_flag = 'x' if flag == 'o' else 'o'
+    if (depth > 2):
+        return get_score(board, opp_flag)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
@@ -205,9 +207,8 @@ def min_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board)
+        return get_score(board, opp_flag)
 
-    opp_flag = 'x' if flag == 'o' else 'o'
 
     for cell in cells:
         board_copy = copy.deepcopy(board)
@@ -231,7 +232,7 @@ def max_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board)
+        return get_score(board, flag)
 
     opp_flag = 'x' if flag == 'o' else 'o'
 
