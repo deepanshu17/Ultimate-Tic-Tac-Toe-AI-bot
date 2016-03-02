@@ -91,28 +91,14 @@ def initialization(flag):
                 ]
 
 
+def get_score(board, board_stat, flag):
 
-def calc_score(m2,m1,m0):
-    if m2 == 3 :
-        score = -100
-    elif m2 == 2 and m0 == 1 :
-        score = -50
-    elif m1 == 2 and m0 == 1 :
-        score = 50
-    elif m1 == 3 :
-        score = 100
-    else :
-        score = 0
-
-    return score
-
-def get_score(board, flag):
     #print_board(board)
-    #m2 = m1 = m0 = 0
-    #s = -200
     final_score = 0
 
     score_achieved = []
+    bigscore = []
+
     for i in range(9):
         block = get_block(i,board)
         # for rows
@@ -171,123 +157,64 @@ def get_score(board, flag):
         elif score == 13:
             final_score += 70
 
-    return final_score
+# for rows
+    for k in range(3):
+        try:
+            index = block_stat.index(board_stat[k:k+3])
+            bigscore.append(index)
+        except ValueError:
+            pass
+    # for columns
+    for k in range(3):
+        try:
+            index = block_stat.index(board_stat[k::3])
+            bigscore.append(index)
+        except ValueError:
+            pass
+    # for diagonals
+    try:
+        index = block_stat.index(board_stat[0::4])
+        bigscore.append(index)
+    except ValueError:
+        pass
+    try:
+        index = block_stat.index(board_stat[2:8:2])
+        bigscore.append(index)
+    except ValueError:
+        pass
 
-    """ 
-        if block[0:3] == 
-        for j in range(3):
-            if block[3*j] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[3*j+1] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j+1] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1            
-
-            if block[3*j+2] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j+2] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            ts = calc_score(m2, m1, m0)
-            if ts > s :
-                s = ts
-            m2 = m1 = m0 = 0
-
-
-        for j in range(3):
-            if block[j] ==opp_flag :
-                m2 = m2+1
-            elif block[j] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[j+3] ==opp_flag :
-                m2 = m2+1
-            elif block[j+3] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[j+6] ==opp_flag :
-                m2 = m2+1
-            elif block[j+6] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            ts = calc_score(m2, m1, m0)
-            if ts > s:
-                s = ts
-            m2 = m1 = m0 = 0
-
-
-        if block[0] == opp_flag:
-            m2 = m2 + 1
-        elif block[0] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[4] == opp_flag:
-            m2 = m2 + 1
-        elif block[4] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[8] == opp_flag:
-            m2 = m2 + 1
-        elif block[8] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        ts = calc_score(m2, m1, m0)
-        if ts > s:
-            s = ts
-        m2 = m1 = m0 = 0
-
-
-        if block[2] == opp_flag:
-            m2 = m2 + 1
-        elif block[2] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[4] == opp_flag:
-            m2 = m2 + 1
-        elif block[4] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[6] == opp_flag:
-            m2 = m2 + 1
-        elif block[6] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        ts = calc_score(m2, m1, m0)
-        if ts > s:
-            s = ts        
-        m2 = m1 = m0 = 0
-
-        final_score += s
+    for ind in bigscore:
+            if ind == 0:
+                final_score += 10000
+            elif ind == 1:
+                final_score += -10000
+            elif ind == 2:
+                final_score += 2000
+            elif ind == 3:
+                final_score += 3000
+            elif ind == 4:
+                finalind_score += 2000
+            elif ind == 5:
+                final_score += -2000
+            elif ind == 6:
+                final_score += -3000
+            elif ind == 7:
+                final_score += -2000
+            elif ind == 8:
+                final_score += -5000
+            elif ind == 9:
+                final_score += -6000
+            elif ind == 10:
+                final_score += -5000
+            elif ind == 11:
+                final_score += 4500
+            elif ind == 12:
+                final_score += 6000
+            elif ind == 13:
+                final_score += 4500
 
     return final_score
-    """
+
 
 def get_copy(board, board_stat):
     #board_copy = copy.deepcopy(board)
@@ -317,7 +244,7 @@ def minimax(old_move, board, board_stat, flag):
 
 def min_play(old_move, board, board_stat, flag, depth):
     if (depth > 1):
-        return get_score(board, opp_flag)
+        return get_score(board, board_stat, opp_flag)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
@@ -327,7 +254,7 @@ def min_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board, opp_flag)
+        return get_score(board, board_stat, opp_flag)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -352,7 +279,7 @@ def max_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board, flag)
+        return get_score(board, board_stat, flag)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
