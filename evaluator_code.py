@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ''' 
 
 This is the engine for the Ultimate TicTacToe Tournament. The code in this file is not for reproduction.
@@ -319,7 +320,9 @@ def simulate(obj1,obj2):
 
 		try:
 			ret_move_pl1 = pl1.move(temp_board_state, temp_block_stat, old_move, pl1_fl)
-		except:
+		except Exception, e:
+                        print e
+                        traceback.print_exc()
 			WINNER, MESSAGE = decide_winner_and_get_message('P1', 'L',   'TIMED OUT')
 		#	print MESSAGE
 			break
@@ -358,7 +361,9 @@ def simulate(obj1,obj2):
 
         	try:
            		ret_move_pl2 = pl2.move(temp_board_state, temp_block_stat, old_move, pl2_fl)
-        	except:
+		except Exception, e:
+                        print e
+                        traceback.print_exc()
 			WINNER, MESSAGE = decide_winner_and_get_message('P2', 'L',   'TIMED OUT')
 			break
         	signal.alarm(0)
@@ -419,9 +424,12 @@ if __name__ == '__main__':
 		obj1 = Player1()
 		obj2 = Player60()
 	elif option == '5':
-		obj1 = Player7()
+		obj1 = Player3()
 		obj2 = Player60()
 	elif option == '6':
+		obj1 = Player7()
+		obj2 = Player60()
+	elif option == '7':
 		obj1 = Player30()
 		obj2 = Player60()
 	else:
@@ -432,7 +440,7 @@ if __name__ == '__main__':
             simulate(obj2, obj1)
 
         else:
-            simulate(obj1,obj2)
+            simulate(obj1, obj2)
         """
 	num = random.uniform(0,1)
 	if num > 0.5:

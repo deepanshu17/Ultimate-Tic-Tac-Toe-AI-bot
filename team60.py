@@ -2,40 +2,95 @@ import random
 import copy
 import pdb
 
+block_win_100 = []
+block_lost_100 = []
+
+block_win_70_1 = []
+block_win_70_2 = []
+block_win_70_3 = []
+
+block_lose_70_1 = []
+block_lose_70_2 = []
+block_lose_70_3 = []
+
+block_may_win_100_1 = []
+block_may_win_100_2 = []
+block_may_win_100_3 = []
+
+
+block_may_lose_100_1 = []
+block_may_lose_100_2 = []
+block_may_lose_100_3 = []
+
+block_stat = []
+
+opp_flag = '-'
+no_flag = '-'
+
+is_first_move = False
+
 class Player60:
     def __init__(self):
         # initialization
         return
 
     def move(self, temp_board, temp_block, old_move, flag):
-        print "+++++++++++++++++++++++++++++++++++++++"
+        global is_first_move
+        if is_first_move == False:
+            initialization(flag)
+            is_first_move = True
+        if (old_move == (-1,-1)):
+            return (4, 4)
+        #print "+++++++++++++++++++++++++++++++++++++++"
 
-        print old_move
-        print flag
-        """
-        allowed_blocks = get_free_and_valid_blocks(old_move, temp_block)
-    
-        cells = get_allowed_cells(allowed_blocks, temp_board)
-        #print len(cells)
-        print cells
-        best_score = float('-inf')
-        best_move = cells[0]
-        board_copy = copy.deepcopy(temp_board)
+        #print old_move
+        #print flag
 
-        for cell in cells:
-            future_board = minimax(board_copy, cell, flag, temp_block)
-            score = get_score(future_board)
-            if score > best_score:
-                best_score = score
-                best_move = cell
-            break 
-        """
         best_move = minimax(old_move, temp_board, temp_block, flag)
 
-        print "+++++++++++++++++++++++++++++++++++++++"
-        print best_move
-        print 
+        #print "+++++++++++++++++++++++++++++++++++++++"
+        #print best_move
+
         return best_move
+
+def initialization(flag):
+    global no_flag, opp_flag
+    global block_win_100, block_lost_100,block_win_70_1, block_win_70_2, block_win_70_3,block_lose_70_1, block_lose_70_2, block_lose_70_3,block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
+
+    no_flag = '-'
+    opp_flag = 'x' if flag == 'o' else 'o'
+    block_win_100 = [flag, flag, flag]
+    block_lost_100 = [opp_flag, opp_flag, opp_flag]
+
+    block_win_70_1 = [flag, flag, no_flag]
+    block_win_70_2 = [flag, no_flag, flag]
+    block_win_70_3 = [no_flag, flag, flag]
+
+    block_lose_70_1 = [opp_flag, opp_flag, no_flag]
+    block_lose_70_2 = [opp_flag, no_flag, opp_flag]
+    block_lose_70_3 = [no_flag, opp_flag, opp_flag]
+
+    #block_win_30 = [flag, no_flag, no_flag]
+    #block_lose_30 = [opp_flag, no_flag, no_flag]
+
+    block_may_win_100_1 = [flag, flag, opp_flag]
+    block_may_win_100_2 = [flag, opp_flag, flag]
+    block_may_win_100_3 = [opp_flag, flag, flag]
+
+
+    block_may_lose_100_1 = [opp_flag, opp_flag, flag]
+    block_may_lose_100_2 = [opp_flag, flag, opp_flag]
+    block_may_lose_100_3 = [flag, opp_flag, opp_flag]
+
+    block_stat = [
+                    block_win_100, block_lost_100,
+                    block_win_70_1, block_win_70_2, block_win_70_3,
+                    block_lose_70_1, block_lose_70_2, block_lose_70_3,
+                    block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,
+                    block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
+                ]
+
+
 
 def calc_score(m2,m1,m0):
     if m2 == 3 :
@@ -52,15 +107,74 @@ def calc_score(m2,m1,m0):
     return score
 
 def get_score(board, flag):
-    opp_flag = 'x' if flag == 'o' else 'o'
     #print_board(board)
-    m2 = m1 = m0 = 0
-    s = -200
+    #m2 = m1 = m0 = 0
+    #s = -200
     final_score = 0
-    
+
+    score_achieved = []
     for i in range(9):
         block = get_block(i,board)
+        # for rows
+        for j in range(3):
+            try:
+                index = block_stat.index(block[j:j+3])
+                score_achieved.append(index)
+            except ValueError:
+                pass
+        # for columns
+        for j in range(3):
+            try:
+                index = block_stat.index(block[j::3])
+                score_achieved.append(index)
+            except ValueError:
+                pass
+        # for diagonals
+        try:
+            index = block_stat.index(block[0::4])
+            score_achieved.append(index)
+        except ValueError:
+            pass
+        try:
+            index = block_stat.index(block[2:8:2])
+            score_achieved.append(index)
+        except ValueError:
+            pass
 
+    for score in score_achieved:
+        if score == 0:
+            final_score += 100
+        elif score == 1:
+            final_score += -100
+        elif score == 2:
+            final_score += 50
+        elif score == 3:
+            final_score += 60
+        elif score == 4:
+            final_score += 50
+        elif score == 5:
+            final_score += -50
+        elif score == 6:
+            final_score += -60
+        elif score == 7:
+            final_score += -50
+        elif score == 8:
+            final_score += -70
+        elif score == 9:
+            final_score += -80
+        elif score == 10:
+            final_score += -70
+        elif score == 11:
+            final_score += 70
+        elif score == 12:
+            final_score += 80
+        elif score == 13:
+            final_score += 70
+
+    return final_score
+
+    """ 
+        if block[0:3] == 
         for j in range(3):
             if block[3*j] ==opp_flag :
                 m2 = m2+1
@@ -173,6 +287,14 @@ def get_score(board, flag):
         final_score += s
 
     return final_score
+    """
+
+def get_copy(board, board_stat):
+    #board_copy = copy.deepcopy(board)
+    board_copy = [row[:] for row in board]
+    #board_stat_copy = copy.deepcopy(board_stat)
+    board_stat_copy = [row[:] for row in board_stat]
+    return (board_copy, board_stat_copy)
 
 def minimax(old_move, board, board_stat, flag):
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
@@ -180,14 +302,12 @@ def minimax(old_move, board, board_stat, flag):
     best_score = float('-inf')
     best_move = cells[0]
 
-    opp_flag = 'x' if flag == 'o' else 'o'
-
     for cell in cells:
-        board_copy = copy.deepcopy(board)
-        board_stat_copy = copy.deepcopy(board_stat)
+        board_copy, board_stat_copy = get_copy(board, board_stat)
+
         future_board = max_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
-        #score = `ore(future_board)
+        # other player's move
         score = min_play(cell, future_board, future_board_stat, opp_flag, 0)
         if score > best_score:
             best_score = score
@@ -196,12 +316,12 @@ def minimax(old_move, board, board_stat, flag):
     return best_move
 
 def min_play(old_move, board, board_stat, flag, depth):
-    opp_flag = 'x' if flag == 'o' else 'o'
-    if (depth > 2):
+    if (depth > 1):
         return get_score(board, opp_flag)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
+
     try:
         best_move = cells[0]
     except IndexError:
@@ -209,17 +329,17 @@ def min_play(old_move, board, board_stat, flag, depth):
         #pdb.set_trace()
         return get_score(board, opp_flag)
 
-
     for cell in cells:
-        board_copy = copy.deepcopy(board)
-        board_stat_copy = copy.deepcopy(board_stat)
+        board_copy, board_stat_copy = get_copy(board, board_stat)
+
         future_board = min_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
-        #score = get_score(future_board)
+        # our player's move
         score = max_play(cell, future_board, future_board_stat, opp_flag, depth+1)
         if score < best_score:
             best_score = score
             best_move = cell
+
     return best_score
 
 def max_play(old_move, board, board_stat, flag, depth):
@@ -234,35 +354,17 @@ def max_play(old_move, board, board_stat, flag, depth):
         #pdb.set_trace()
         return get_score(board, flag)
 
-    opp_flag = 'x' if flag == 'o' else 'o'
-
     for cell in cells:
-        board_copy = copy.deepcopy(board)
-        board_stat_copy = copy.deepcopy(board_stat)
-        future_board = max_move(board, cell, flag)
+        board_copy, board_stat_copy = get_copy(board, board_stat)
+
+        future_board = max_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
-        #score = get_score(future_board)
-        score = min_play(cell, future_board, future_board_stat, opp_flag, depth+2)
+        score = min_play(cell, future_board, future_board_stat, opp_flag, depth+1)
         if score > best_score:
             best_score = score
             best_move = cell
-    return best_score
 
-"""
-def minimax(board, move, flag, board_stat):
-    board = max_move(board, move, flag)
-    board_stat = update_board_stat(board, board_stat, move)
-    print_board(board)
-    return board
-    opp_flag = 'x' if flag == 'o' else 'o'
-    allowed_blocks = get_free_and_valid_blocks(move, board_stat)
-    cells = get_allowed_cells(allowed_blocks, board)
-    print "************************"
-    print allowed_blocks
-    print "************************"
-    board = min_move(board, move, opp_flag)
-    return board
-"""
+    return best_score
 
 def max_move(board, move, flag):
     x = move[0]
@@ -288,7 +390,8 @@ def update_board_stat(board, board_stat, move):
     #print_block(block)
     #print_board_stat(board_stat)
 
-    board_stat_new = copy.deepcopy(board_stat)
+    #board_stat_new = copy.deepcopy(board_stat)
+    board_stat_new = [ row[:] for row in board_stat ]
 
     new_flag = 0
     for i in range(9) :
