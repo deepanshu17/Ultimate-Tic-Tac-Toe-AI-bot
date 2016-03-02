@@ -55,7 +55,9 @@ class Player60:
 
 def initialization(flag):
     global no_flag, opp_flag
-    global block_win_100, block_lost_100,block_win_70_1, block_win_70_2, block_win_70_3,block_lose_70_1, block_lose_70_2, block_lose_70_3,block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
+    global block_win_100, block_lost_100
+    global block_win_70_1, block_win_70_2, block_win_70_3,block_lose_70_1, block_lose_70_2, block_lose_70_3
+    global block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3, block_stat
 
     no_flag = '-'
     opp_flag = 'x' if flag == 'o' else 'o'
@@ -90,57 +92,55 @@ def initialization(flag):
                     block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
                 ]
 
+def get_index(config):
+    i=0
+    for stat in block_stat:
+        if stat == config:
+            return i
+        i += 1
 
-
-def calc_score(m2,m1,m0):
-    if m2 == 3 :
-        score = -100
-    elif m2 == 2 and m0 == 1 :
-        score = -50
-    elif m1 == 2 and m0 == 1 :
-        score = 50
-    elif m1 == 3 :
-        score = 100
-    else :
-        score = 0
-
-    return score
-
-def get_score(board, flag):
-    #print_board(board)
-    #m2 = m1 = m0 = 0
-    #s = -200
+    return -1
+def get_score(board):
+    #print "--------------------" 
+    #print block_stat
     final_score = 0
-
     score_achieved = []
     for i in range(9):
-        block = get_block(i,board)
-        # for rows
+        block = get_block(i, board)
+        #print block
         for j in range(3):
+            # for rows
             try:
-                index = block_stat.index(block[j:j+3])
+                index = get_index(block[j:j+3])
+                #block_stat.index(block[j:j+3])
+                score_achieved.append(index)
+            except ValueError:
+                #print block[j:j+3]
+                pass
+            # for columns
+            try:
+                index = get_index(block[j::3])
+                #index = block_stat.index(block[j::3])
                 score_achieved.append(index)
             except ValueError:
                 pass
-        # for columns
-        for j in range(3):
-            try:
-                index = block_stat.index(block[j::3])
-                score_achieved.append(index)
-            except ValueError:
-                pass
+
         # for diagonals
         try:
-            index = block_stat.index(block[0::4])
+            index = get_index(block[0::4])
+            #index = block_stat.index(block[0::4])
             score_achieved.append(index)
         except ValueError:
             pass
         try:
-            index = block_stat.index(block[2:8:2])
+            index = get_index(block[2:8:2])
+            #index = block_stat.index(block[2:8:2])
             score_achieved.append(index)
         except ValueError:
             pass
-
+    #print "--------------------" 
+    #print len(score_achieved)
+    #print "--------------------" 
     for score in score_achieved:
         if score == 0:
             final_score += 100
@@ -173,126 +173,8 @@ def get_score(board, flag):
 
     return final_score
 
-    """ 
-        if block[0:3] == 
-        for j in range(3):
-            if block[3*j] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[3*j+1] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j+1] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1            
-
-            if block[3*j+2] ==opp_flag :
-                m2 = m2+1
-            elif block[3*j+2] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            ts = calc_score(m2, m1, m0)
-            if ts > s :
-                s = ts
-            m2 = m1 = m0 = 0
-
-
-        for j in range(3):
-            if block[j] ==opp_flag :
-                m2 = m2+1
-            elif block[j] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[j+3] ==opp_flag :
-                m2 = m2+1
-            elif block[j+3] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            if block[j+6] ==opp_flag :
-                m2 = m2+1
-            elif block[j+6] ==flag :
-                m1 = m1 + 1
-            else:
-                m0 = m0 + 1
-
-            ts = calc_score(m2, m1, m0)
-            if ts > s:
-                s = ts
-            m2 = m1 = m0 = 0
-
-
-        if block[0] == opp_flag:
-            m2 = m2 + 1
-        elif block[0] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[4] == opp_flag:
-            m2 = m2 + 1
-        elif block[4] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[8] == opp_flag:
-            m2 = m2 + 1
-        elif block[8] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        ts = calc_score(m2, m1, m0)
-        if ts > s:
-            s = ts
-        m2 = m1 = m0 = 0
-
-
-        if block[2] == opp_flag:
-            m2 = m2 + 1
-        elif block[2] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[4] == opp_flag:
-            m2 = m2 + 1
-        elif block[4] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        if block[6] == opp_flag:
-            m2 = m2 + 1
-        elif block[6] == flag:
-            m1 = m1 + 1
-        else:
-            m0 = m0 + 1
-
-        ts = calc_score(m2, m1, m0)
-        if ts > s:
-            s = ts        
-        m2 = m1 = m0 = 0
-
-        final_score += s
-
-    return final_score
-    """
-
 def get_copy(board, board_stat):
-    #board_copy = copy.deepcopy(board)
     board_copy = [row[:] for row in board]
-    #board_stat_copy = copy.deepcopy(board_stat)
     board_stat_copy = [row[:] for row in board_stat]
     return (board_copy, board_stat_copy)
 
@@ -317,7 +199,7 @@ def minimax(old_move, board, board_stat, flag):
 
 def min_play(old_move, board, board_stat, flag, depth):
     if (depth > 1):
-        return get_score(board, opp_flag)
+        return get_score(board)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
@@ -327,7 +209,7 @@ def min_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board, opp_flag)
+        return get_score(board)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -343,6 +225,8 @@ def min_play(old_move, board, board_stat, flag, depth):
     return best_score
 
 def max_play(old_move, board, board_stat, flag, depth):
+    if (depth > 2):
+        return get_score(board)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     #print cells
@@ -352,7 +236,7 @@ def max_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board, flag)
+        return get_score(board)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -472,15 +356,10 @@ def print_block_by_number(block_number, board):
     print "================BLOCK================="
 
 def print_block(block):
-
-
-
     print "================BLOCK================="    
     for i in range(3):
         print block[i*3] + " " + block[i*3+1] + " " + block[i*3+2]
     print "======================================"
-
-
 
 
 def is_allowed_block(block_number, temp_block):
