@@ -472,10 +472,16 @@ def print_block_by_number(block_number, board):
     print "================BLOCK================="
 
 def print_block(block):
+
+
+
     print "================BLOCK================="    
     for i in range(3):
         print block[i*3] + " " + block[i*3+1] + " " + block[i*3+2]
     print "======================================"
+
+
+
 
 def is_allowed_block(block_number, temp_block):
     return temp_board[block_number] == '-'
