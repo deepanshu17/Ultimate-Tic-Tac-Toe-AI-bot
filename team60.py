@@ -100,11 +100,13 @@ def get_index(config):
         i += 1
 
     return -1
-def get_score(board):
-    #print "--------------------" 
-    #print block_stat
+
+def get_score(board, board_stat):
+    #print_board(board)
     final_score = 0
     score_achieved = []
+    bigscore = []
+
     for i in range(9):
         block = get_block(i, board)
         #print block
@@ -171,7 +173,64 @@ def get_score(board):
         elif score == 13:
             final_score += 70
 
+    # for rows
+    for k in range(3):
+        try:
+            index = block_stat.index(board_stat[k:k+3])
+            bigscore.append(index)
+        except ValueError:
+            pass
+    # for columns
+    for k in range(3):
+        try:
+            index = block_stat.index(board_stat[k::3])
+            bigscore.append(index)
+        except ValueError:
+            pass
+    # for diagonals
+    try:
+        index = block_stat.index(board_stat[0::4])
+        bigscore.append(index)
+    except ValueError:
+        pass
+    try:
+        index = block_stat.index(board_stat[2:8:2])
+        bigscore.append(index)
+    except ValueError:
+        pass
+
+    for ind in bigscore:
+            if ind == 0:
+                final_score += 10000
+            elif ind == 1:
+                final_score += -10000
+            elif ind == 2:
+                final_score += 2000
+            elif ind == 3:
+                final_score += 3000
+            elif ind == 4:
+                final_score += 2000
+            elif ind == 5:
+                final_score += -2000
+            elif ind == 6:
+                final_score += -3000
+            elif ind == 7:
+                final_score += -2000
+            elif ind == 8:
+                final_score += -5000
+            elif ind == 9:
+                final_score += -6000
+            elif ind == 10:
+                final_score += -5000
+            elif ind == 11:
+                final_score += 4500
+            elif ind == 12:
+                final_score += 6000
+            elif ind == 13:
+                final_score += 4500
+
     return final_score
+
 
 def get_copy(board, board_stat):
     board_copy = [row[:] for row in board]
@@ -199,7 +258,7 @@ def minimax(old_move, board, board_stat, flag):
 
 def min_play(old_move, board, board_stat, flag, depth):
     if (depth > 1):
-        return get_score(board)
+        return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
@@ -209,7 +268,7 @@ def min_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board)
+        return get_score(board, board_stat)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -236,7 +295,7 @@ def max_play(old_move, board, board_stat, flag, depth):
     except IndexError:
         print "index error"
         #pdb.set_trace()
-        return get_score(board)
+        return get_score(board, board_stat)
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
