@@ -24,6 +24,10 @@ block_may_lose_100_3 = []
 
 block_stat = []
 
+my_board = []
+my_board_stat = []
+
+flag = '-'
 opp_flag = '-'
 no_flag = '-'
 
@@ -37,9 +41,10 @@ class Player60:
     def move(self, temp_board, temp_block, old_move, flag):
         global is_first_move
         if is_first_move == False:
-            initialization(flag)
+            initialization(flag, temp_board, temp_block)
             is_first_move = True
         if (old_move == (-1,-1)):
+            update_my_config((4,4))
             return (4, 4)
         #print "+++++++++++++++++++++++++++++++++++++++"
 
@@ -50,15 +55,18 @@ class Player60:
 
         #print "+++++++++++++++++++++++++++++++++++++++"
         #print best_move
+        update_my_config(best_move, old_move)
 
         return best_move
 
-def initialization(flag):
-    global no_flag, opp_flag
+def initialization(flag_value, board, board_stat):
+    global flag, no_flag, opp_flag
     global block_win_100, block_lost_100
     global block_win_70_1, block_win_70_2, block_win_70_3,block_lose_70_1, block_lose_70_2, block_lose_70_3
     global block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3, block_stat
-
+    global my_board, my_board_stat
+    
+    flag = flag_value
     no_flag = '-'
     opp_flag = 'x' if flag == 'o' else 'o'
     block_win_100 = [flag, flag, flag]
@@ -91,6 +99,40 @@ def initialization(flag):
                     block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,
                     block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
                 ]
+
+    my_board_stat = [row[:] for row in board_stat]
+
+    num = 0
+    block_1 = []
+    block_2 = []
+    block_3 = []
+    for x in range(9):
+        row = board[x]
+        if x < 3:
+            block_1[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[0:3]
+            block_3[num:num+3] = row[0:3]
+            num += 3
+        
+        elif x >= 3 and x < 6:
+            block_1[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[0:3]
+            block_3[num:num+3] = row[0:3]
+            num += 3
+        else:
+            block_1[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[0:3]
+            block_3[num:num+3] = row[0:3]
+            num += 3
+        if x in [2,5,8]:
+            my_board.append(block_1)
+            my_board.append(block_2)
+            my_board.append(block_3)
+            block_1 = []
+            block_2 = []
+            block_3 = []
+            num = 0
+   
 
 def get_index(config):
     i=0
@@ -242,7 +284,9 @@ def minimax(old_move, board, board_stat, flag):
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
     best_move = cells[0]
-
+    #print "-----minimax--------------"
+    #print len(cells)
+    #print "-----minimax--------------"
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
 
@@ -258,11 +302,16 @@ def minimax(old_move, board, board_stat, flag):
 
 def min_play(old_move, board, board_stat, flag, depth):
     if (depth > 1):
+        #print "-------------Depth------------"
+        #print depth
+        #print "-------------Depth------------"
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
-    best_score = float('-inf')
-
+    best_score = float('inf')
+    #print "------------min_play----------------"
+    #print len(cells)
+    #print "------------min_play----------------"
     try:
         best_move = cells[0]
     except IndexError:
@@ -290,6 +339,9 @@ def max_play(old_move, board, board_stat, flag, depth):
     cells = get_allowed_cells(allowed_blocks, board)
     #print cells
     best_score = float('-inf')
+    #print "------------max_play----------------"
+    #print len(cells)
+    #print "------------max_play----------------"
     try:
         best_move = cells[0]
     except IndexError:
@@ -324,6 +376,41 @@ def min_move(board, move, flag):
     #print_board(board)
     return board
 
+def update_my_config(move, old_move = None):
+    global my_board, my_board_stat
+    block_number = get_block_number(move)
+    x = move[0] % 3 # vertical
+    y = move[1] % 3 # horizontal
+    
+    index = (x*3) + y
+    my_board[block_number][index] = flag
+
+    if old_move:
+        block_number = get_block_number(move)
+        x = old_move[0] % 3 # vertical
+        y = old_move[1] % 3 # horizontal
+        
+        index = (x*3) + y
+        my_board[block_number][index] = opp_flag
+    
+    print_my_board()
+    #for bl in my_board:
+    #    print bl
+
+
+def print_my_board():
+    global my_board
+
+    for bs in my_board:
+        for i in [0,3,6]: 
+            print bs[i] + " " + bs[i+1] + " " + bs[i+2] 
+        print 
+
+
+def get_my_block(block_number):
+    global my_board
+    return my_board[block_number]
+
 def update_board_stat(board, board_stat, move):
     # update board stat 
     #print move
@@ -341,15 +428,15 @@ def update_board_stat(board, board_stat, move):
             if block[i] == '-' :
                 new_flag = 1
     
-    if new_flag == 1 :
-            board_stat_new[block_number] = '-'
 
-    elif block[0:3] == ['x', 'x', 'x' ] or block[3:6] == ['x', 'x', 'x' ] or block[6:9] == ['x', 'x', 'x' ] or block[0::3] == ['x', 'x', 'x' ] or block[3::6] == ['x', 'x', 'x' ] or block[6::9] == ['x', 'x', 'x' ] or block[0::4] == ['x', 'x', 'x' ] or block[2:7:2] == ['x', 'x', 'x' ] :
+    if block[0:3] == ['x', 'x', 'x' ] or block[3:6] == ['x', 'x', 'x' ] or block[6:9] == ['x', 'x', 'x' ] or block[0::3] == ['x', 'x', 'x' ] or block[3::6] == ['x', 'x', 'x' ] or block[6::9] == ['x', 'x', 'x' ] or block[0::4] == ['x', 'x', 'x' ] or block[2:7:2] == ['x', 'x', 'x' ] :
         board_stat_new[block_number] = 'x'
 
     elif block[0:3] == ['o', 'o', 'o' ] or block[3:6] == ['o', 'o', 'o' ] or block[6:9] == ['o', 'o', 'o' ] or block[0::3] == ['o', 'o', 'o' ] or block[3::6] == ['o', 'o', 'o' ] or block[6::9] == ['o', 'o', 'o' ] or block[0::4] == ['o', 'o', 'o' ] or block[2:7:2] == ['o', 'o', 'o' ] :
         board_stat_new[block_number] = 'o'
     
+    elif new_flag == 1 :
+            board_stat_new[block_number] = '-'
     else:
         board_stat_new[block_number] = 'D'
 
