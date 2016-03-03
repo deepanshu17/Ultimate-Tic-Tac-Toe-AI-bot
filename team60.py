@@ -1,5 +1,4 @@
 import random
-import copy
 import pdb
 
 block_win_100 = []
@@ -44,7 +43,7 @@ class Player60:
             initialization(flag, temp_board, temp_block)
             is_first_move = True
         if (old_move == (-1,-1)):
-            update_my_config((4,4))
+            #update_my_config((4,4))
             return (4, 4)
         #print "+++++++++++++++++++++++++++++++++++++++"
 
@@ -55,7 +54,7 @@ class Player60:
 
         #print "+++++++++++++++++++++++++++++++++++++++"
         #print best_move
-        update_my_config(best_move, old_move)
+        #update_my_config(best_move, old_move)
 
         return best_move
 
@@ -80,8 +79,13 @@ def initialization(flag_value, board, board_stat):
     block_lose_70_2 = [opp_flag, no_flag, opp_flag]
     block_lose_70_3 = [no_flag, opp_flag, opp_flag]
 
-    #block_win_30 = [flag, no_flag, no_flag]
-    #block_lose_30 = [opp_flag, no_flag, no_flag]
+    #block_win_30_1 = [flag, no_flag, no_flag]
+    block_win_30_2 = [no_flag, flag, no_flag]
+    #block_win_30_3 = [no_flag, no_flag, flag]
+
+    #block_lose_30_1 = [opp_flag, no_flag, no_flag]
+    block_lose_30_2 = [no_flag, opp_flag, no_flag]
+    #block_lose_30_3 = [no_flag, no_flag, opp_flag]
 
     block_may_win_100_1 = [flag, flag, opp_flag]
     block_may_win_100_2 = [flag, opp_flag, flag]
@@ -97,9 +101,13 @@ def initialization(flag_value, board, board_stat):
                     block_win_70_1, block_win_70_2, block_win_70_3,
                     block_lose_70_1, block_lose_70_2, block_lose_70_3,
                     block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,
-                    block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3
-                ]
+                    block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3,
+                    block_win_30_2, #block_win_30_2,block_win_30_3,
+                    block_lose_30_2 #block_lose_30_2, block_lose_30_3
 
+
+                ]
+    """
     my_board_stat = [row[:] for row in board_stat]
 
     num = 0
@@ -132,11 +140,13 @@ def initialization(flag_value, board, board_stat):
             block_2 = []
             block_3 = []
             num = 0
+    """
 
 def get_score(board, board_stat):
     #print_board(board)
     final_score = 0
-    score_achieved = []
+    score_pos_list = []
+    #score_position = []
     bigscore = []
 
     for i in range(9):
@@ -146,58 +156,130 @@ def get_score(board, board_stat):
             # for rows
             try:
                 index = block_stat.index(block[j:j+3])
-                score_achieved.append(index)
+                score_pos_list.append((index, 0))
+                #score_achieved.append(index)
+                #score_position.append(0)
             except ValueError:
                 #print block[j:j+3]
                 pass
             # for columns
             try:
                 index = block_stat.index(block[j::3])
-                score_achieved.append(index)
+                score_pos_list.append((index, 1))
+                #score_achieved.append(index)
+                #score_position.append(1)
             except ValueError:
                 pass
 
         # for diagonals
         try:
             index = block_stat.index(block[0::4])
-            score_achieved.append(index)
+            score_pos_list.append((index, 2))
+            #score_achieved.append(index)
+            #score_position.append(2)
         except ValueError:
             pass
         try:
             index = block_stat.index(block[2:8:2])
-            score_achieved.append(index)
+            score_pos_list.append((index, 2))
+            #score_achieved.append(index)
+            #score_position.append(2)
         except ValueError:
             pass
-
-    for score in score_achieved:
+    
+    #print "-----------------"
+    #print score_pos_list
+    #print "-----------------"
+    for data in score_pos_list:
+        score = data[0]
+        position = data[1]
         if score == 0:
-            final_score += 300
+            final_score += 150
+            if position == 2:
+                final_score += 150
+
         elif score == 1:
-            final_score += -300
+            final_score += -150
+            if position == 2:
+                final_score -= 150
+
         elif score == 2:
-            final_score += 60
+            final_score += 30
+            if position == 2:
+                final_score += 20
+
         elif score == 3:
-            final_score += 70
+            final_score += 50
+            if position == 2:
+                final_score += 20
+
         elif score == 4:
-            final_score += 60
+            final_score += 30
+            if position == 2:
+                final_score += 20
+
         elif score == 5:
-            final_score += -60
+            final_score += -30
+            if position == 2:
+                final_score -= 20
+
         elif score == 6:
-            final_score += -70
+            final_score += -50
+            if position == 2:
+                final_score -= 20
+
         elif score == 7:
-            final_score += -60
+            final_score += -30
+            if position == 2:
+                final_score -= 20
+
         elif score == 8:
-            final_score += -120
+            final_score += -40
+            if position == 2:
+                final_score += 10
+
         elif score == 9:
-            final_score += -140
+            final_score += -50
+            if position == 2:
+                final_score += 20
+
         elif score == 10:
-            final_score += -120
+            final_score += -40
+            if position == 2:
+                final_score += 10
+
         elif score == 11:
-            final_score += 120
+            final_score += 40
+            if position == 2:
+                final_score += 20
+
         elif score == 12:
-            final_score += 140
+            final_score += 50
+            if position == 2:
+                final_score += 30
+
         elif score == 13:
-            final_score += 120
+            final_score += 40
+            if position == 2:
+                final_score += 20
+
+        elif score == 14:
+            final_score += 30
+            if position == 0:
+                final_score += 10
+            elif position == 1:
+                final_score += 10
+            elif position == 2:
+                final_score += 10
+
+        elif score == 15:
+            final_score += -50
+            if position == 0:
+                final_score += -10
+            elif position == 1:
+                final_score += -10
+            elif position == 2:
+                final_score += -10
 
     # for rows
     for k in range(3):
@@ -226,35 +308,36 @@ def get_score(board, board_stat):
         pass
 
     for ind in bigscore:
-            if ind == 0:
-                final_score += 10000
-            elif ind == 1:
-                final_score += -10000
-            elif ind == 2:
-                final_score += 2000
-            elif ind == 3:
-                final_score += 3000
-            elif ind == 4:
-                final_score += 2000
-            elif ind == 5:
-                final_score += -2000
-            elif ind == 6:
-                final_score += -3000
-            elif ind == 7:
-                final_score += -2000
-            elif ind == 8:
-                final_score += -5000
-            elif ind == 9:
-                final_score += -6000
-            elif ind == 10:
-                final_score += -5000
-            elif ind == 11:
-                final_score += 4500
-            elif ind == 12:
-                final_score += 6000
-            elif ind == 13:
-                final_score += 4500
-
+        if ind == 0:
+            final_score += 1500
+        elif ind == 1:
+            final_score += -1500
+        elif ind == 2:
+            final_score += 400
+        elif ind == 3:
+            final_score += 600
+        elif ind == 4:
+            final_score += 400
+        elif ind == 5:
+            final_score += -400
+        elif ind == 6:
+            final_score += -600
+        elif ind == 7:
+            final_score += -400
+        elif ind == 8:
+            final_score += -500
+        elif ind == 9:
+            final_score += -600
+        elif ind == 10:
+            final_score += -500
+        elif ind == 11:
+            final_score += 500
+        elif ind == 12:
+            final_score += 600
+        elif ind == 13:
+            final_score += 500
+    
+    #print final_score
     return final_score
 
 
@@ -322,8 +405,8 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
     return beta
 
 def max_play(old_move, board, board_stat, depth, alpha, beta):
-    #if (depth > 4):
-    #    return get_score(board, board_stat)
+    if (depth >= 3):
+        return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
