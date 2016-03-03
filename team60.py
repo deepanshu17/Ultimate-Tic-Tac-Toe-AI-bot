@@ -295,7 +295,7 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
     #print "-------------------"
     #print flag, opp_flag, no_flag
     #print "-------------------"
-    if (depth > 3):
+    if (depth > 2):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
