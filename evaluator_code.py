@@ -304,7 +304,7 @@ def simulate(obj1,obj2):
 
 	WINNER = ''
 	MESSAGE = ''
-	TIMEALLOWED = 20
+	TIMEALLOWED = 1200000000
 	p1_pts=0
 	p2_pts=0
 

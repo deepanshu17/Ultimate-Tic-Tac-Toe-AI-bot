@@ -55,6 +55,7 @@ class Player60:
         #print "+++++++++++++++++++++++++++++++++++++++"
         #print best_move
         update_my_config(best_move, old_move)
+        #pdb.set_trace()
 
         return best_move
 
@@ -147,6 +148,7 @@ def initialization(flag_value, board, board_stat):
             num = 0
 
 def get_score(board, board_stat):
+    global block_stat
     #print_board(board)
     final_score = 0
     score_pos_list = []
@@ -155,23 +157,17 @@ def get_score(board, board_stat):
 
     for i in range(9):
         block = get_block(i, board)
-        #print block
         for j in range(3):
             # for rows
             try:
                 index = block_stat.index(block[j:j+3])
                 score_pos_list.append((index, 0))
-                #score_achieved.append(index)
-                #score_position.append(0)
             except ValueError:
-                #print block[j:j+3]
                 pass
             # for columns
             try:
                 index = block_stat.index(block[j::3])
                 score_pos_list.append((index, 1))
-                #score_achieved.append(index)
-                #score_position.append(1)
             except ValueError:
                 pass
 
@@ -179,31 +175,24 @@ def get_score(board, board_stat):
         try:
             index = block_stat.index(block[0::4])
             score_pos_list.append((index, 2))
-            #score_achieved.append(index)
-            #score_position.append(2)
         except ValueError:
             pass
         try:
             index = block_stat.index(block[2:8:2])
             score_pos_list.append((index, 2))
-            #score_achieved.append(index)
-            #score_position.append(2)
         except ValueError:
             pass
     
-    #print "-----------------"
-    #print score_pos_list
-    #print "-----------------"
     for data in score_pos_list:
         score = data[0]
         position = data[1]
         if score == 0:
-            final_score += 300
+            final_score += 400
             if position == 2:
                 final_score += 150
 
         elif score == 1:
-            final_score += -300
+            final_score += -400
             if position == 2:
                 final_score -= 150
 
@@ -238,32 +227,32 @@ def get_score(board, board_stat):
                 final_score -= 30
 
         elif score == 8:
-            final_score += -120
+            final_score += -130
             if position == 2:
                 final_score += 10
 
         elif score == 9:
-            final_score += -140
+            final_score += -150
             if position == 2:
                 final_score += 10
 
         elif score == 10:
-            final_score += -120
+            final_score += -130
             if position == 2:
                 final_score += 10
 
         elif score == 11:
-            final_score += 120
+            final_score += 130
             if position == 2:
                 final_score += 30
 
         elif score == 12:
-            final_score += 140
+            final_score += 150
             if position == 2:
                 final_score += 40
 
         elif score == 13:
-            final_score += 120
+            final_score += 130
             if position == 2:
                 final_score += 30
 
@@ -273,16 +262,13 @@ def get_score(board, board_stat):
             #     final_score += 10
 
         elif score == 15:
-            final_score = 400000
-            if position == 2:
-                final_score += 10
+            final_score += 20
 
         # elif score == 16:
         #     final_score += 10
             # if position == 2:
             #     final_score += 10
 
-        print "*************************************" + "\n" + str(final_score) + "\n" 
 
     # for rows
     for k in range(3):
@@ -312,36 +298,37 @@ def get_score(board, board_stat):
 
     
     for ind in bigscore:
-            if ind == 0:
-                final_score += 10000
-            elif ind == 1:
-                final_score += -10000
-            elif ind == 2:
-                final_score += 2000
-            elif ind == 3:
-                final_score += 3000
-            elif ind == 4:
-                final_score += 2000
-            elif ind == 5:
-                final_score += -2000
-            elif ind == 6:
-                final_score += -3000
-            elif ind == 7:
-                final_score += -2000
-            elif ind == 8:
-                final_score += -5000
-            elif ind == 9:
-                final_score += -6000
-            elif ind == 10:
-                final_score += -5000
-            elif ind == 11:
-                final_score += 4500
-            elif ind == 12:
-                final_score += 6000
-            elif ind == 13:
-                final_score += 4500
+        if ind == 0:
+            final_score += 10000
+        elif ind == 1:
+            final_score += -10000
+        elif ind == 2:
+            final_score += 2000
+        elif ind == 3:
+            final_score += 3000
+        elif ind == 4:
+            final_score += 2000
+        elif ind == 5:
+            final_score += -2000
+        elif ind == 6:
+            final_score += -3000
+        elif ind == 7:
+            final_score += -2000
+        elif ind == 8:
+            final_score += -5000
+        elif ind == 9:
+            final_score += -6000
+        elif ind == 10:
+            final_score += -5000
+        elif ind == 11:
+            final_score += 4500
+        elif ind == 12:
+            final_score += 6000
+        elif ind == 13:
+            final_score += 4500
 
-    
+    #print "Final" + str(final_score)
+    #print "***********************"
     return final_score
 
 
@@ -366,11 +353,24 @@ def minimax(old_move, board, board_stat):
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         # other player's move
         score = min_play(cell, future_board, future_board_stat, 0, alpha, beta)
+        if score > best_score:
+            best_move = cell
+            best_score = score
+        """
         best_score = max(best_score, score)
+        print "-----------------------"
+        print score
+        print cell
+        print "-----------------------"
         if best_score >= beta:
+            print best_score
             best_move = cell
             break
+        """
         alpha = max(alpha, best_score)
+
+    print best_move
+    print best_score
     return best_move
 
 
@@ -396,7 +396,7 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
     return best_score
 
 def max_play(old_move, board, board_stat, depth, alpha, beta):
-    if (depth >= 3):
+    if (depth > 3):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
