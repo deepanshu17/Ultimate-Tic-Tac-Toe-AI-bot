@@ -187,33 +187,33 @@ def get_score(board, board_stat):
     #print "--------------------" 
     for score in score_achieved:
         if score == 0:
-            final_score += 100
+            final_score += 300
         elif score == 1:
-            final_score += -100
+            final_score += -300
         elif score == 2:
-            final_score += 50
-        elif score == 3:
             final_score += 60
+        elif score == 3:
+            final_score += 70
         elif score == 4:
-            final_score += 50
+            final_score += 60
         elif score == 5:
-            final_score += -50
-        elif score == 6:
             final_score += -60
+        elif score == 6:
+            final_score += -70
         elif score == 7:
-            final_score += -50
+            final_score += -60
         elif score == 8:
-            final_score += -70
+            final_score += -120
         elif score == 9:
-            final_score += -80
+            final_score += -140
         elif score == 10:
-            final_score += -70
+            final_score += -120
         elif score == 11:
-            final_score += 70
+            final_score += 120
         elif score == 12:
-            final_score += 80
+            final_score += 140
         elif score == 13:
-            final_score += 70
+            final_score += 120
 
     # for rows
     for k in range(3):
