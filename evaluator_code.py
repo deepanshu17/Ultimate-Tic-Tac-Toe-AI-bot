@@ -23,6 +23,7 @@ from team60 import Player60
 from team3 import Player3
 from team7 import Player7
 from team30 import Player30
+from team27 import Player27
 
 class TimedOutExc(Exception):
         pass
@@ -303,7 +304,7 @@ def simulate(obj1,obj2):
 
 	WINNER = ''
 	MESSAGE = ''
-	TIMEALLOWED = 12
+	TIMEALLOWED = 20
 	p1_pts=0
 	p2_pts=0
 
@@ -431,6 +432,10 @@ if __name__ == '__main__':
 		obj2 = Player60()
 	elif option == '7':
 		obj1 = Player30()
+		obj2 = Player60()
+	
+	elif option == '8':
+		obj1 = Player27()
 		obj2 = Player60()
 	else:
 		print 'Invalid option'
