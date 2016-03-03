@@ -43,7 +43,7 @@ class Player60:
             initialization(flag, temp_board, temp_block)
             is_first_move = True
         if (old_move == (-1,-1)):
-            #update_my_config((4,4))
+            update_my_config((4,4))
             return (4, 4)
         #print "+++++++++++++++++++++++++++++++++++++++"
 
@@ -54,7 +54,7 @@ class Player60:
 
         #print "+++++++++++++++++++++++++++++++++++++++"
         #print best_move
-        #update_my_config(best_move, old_move)
+        update_my_config(best_move, old_move)
 
         return best_move
 
@@ -80,11 +80,11 @@ def initialization(flag_value, board, board_stat):
     block_lose_70_3 = [no_flag, opp_flag, opp_flag]
 
     #block_win_30_1 = [flag, no_flag, no_flag]
-    block_win_30_2 = [no_flag, flag, no_flag]
+    #block_win_30_2 = [no_flag, flag, no_flag]
     #block_win_30_3 = [no_flag, no_flag, flag]
 
     #block_lose_30_1 = [opp_flag, no_flag, no_flag]
-    block_lose_30_2 = [no_flag, opp_flag, no_flag]
+    #block_lose_30_2 = [no_flag, opp_flag, no_flag]
     #block_lose_30_3 = [no_flag, no_flag, opp_flag]
 
     block_may_win_100_1 = [flag, flag, opp_flag]
@@ -102,12 +102,12 @@ def initialization(flag_value, board, board_stat):
                     block_lose_70_1, block_lose_70_2, block_lose_70_3,
                     block_may_win_100_1, block_may_win_100_2, block_may_lose_100_3,
                     block_may_lose_100_1, block_may_lose_100_3, block_may_lose_100_3,
-                    block_win_30_2, #block_win_30_2,block_win_30_3,
-                    block_lose_30_2 #block_lose_30_2, block_lose_30_3
+                    #block_win_30_2, #block_win_30_2,block_win_30_3,
+                    #block_lose_30_2 #block_lose_30_2, block_lose_30_3
 
 
                 ]
-    """
+
     my_board_stat = [row[:] for row in board_stat]
 
     num = 0
@@ -118,19 +118,19 @@ def initialization(flag_value, board, board_stat):
         row = board[x]
         if x < 3:
             block_1[num:num+3] = row[0:3]
-            block_2[num:num+3] = row[0:3]
-            block_3[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[3:6]
+            block_3[num:num+3] = row[6:9]
             num += 3
         
         elif x >= 3 and x < 6:
             block_1[num:num+3] = row[0:3]
-            block_2[num:num+3] = row[0:3]
-            block_3[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[3:6]
+            block_3[num:num+3] = row[6:9]
             num += 3
         else:
             block_1[num:num+3] = row[0:3]
-            block_2[num:num+3] = row[0:3]
-            block_3[num:num+3] = row[0:3]
+            block_2[num:num+3] = row[3:6]
+            block_3[num:num+3] = row[6:9]
             num += 3
         if x in [2,5,8]:
             my_board.append(block_1)
@@ -140,7 +140,6 @@ def initialization(flag_value, board, board_stat):
             block_2 = []
             block_3 = []
             num = 0
-    """
 
 def get_score(board, board_stat):
     #print_board(board)
@@ -263,6 +262,7 @@ def get_score(board, board_stat):
             if position == 2:
                 final_score += 20
 
+        """
         elif score == 14:
             final_score += 30
             if position == 0:
@@ -280,6 +280,7 @@ def get_score(board, board_stat):
                 final_score += -10
             elif position == 2:
                 final_score += -10
+        """
 
     # for rows
     for k in range(3):
@@ -347,12 +348,13 @@ def get_copy(board, board_stat):
 
 def minimax(old_move, board, board_stat):
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
-    cells = get_allowed_cells(allowed_blocks, board)
-    #best_score = float('-inf')
+    cells = get_allowed_cells(allowed_blocks, board, True)
+    best_score = float('-inf')
     best_move = cells[0]
 
     alpha = float('-inf')
     beta = float('inf')
+
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
 
@@ -360,32 +362,20 @@ def minimax(old_move, board, board_stat):
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         # other player's move
         score = min_play(cell, future_board, future_board_stat, 0, alpha, beta)
-        if alpha > score:
+        best_score = max(best_score, score)
+        if best_score >= beta:
             best_move = cell
-            alpha = score
-        if beta <= alpha:
             break
-        #if score > best_score:
-        #    best_score = score
-        #    best_move = cell
-
+        alpha = max(alpha, best_score)
     return best_move
 
+
 def min_play(old_move, board, board_stat, depth, alpha, beta):
-    if (depth > 3):
+    if (depth > 4):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('inf')
-
-    """
-    try:
-        best_move = cells[0]
-    except IndexError:
-        print "index error"
-        #pdb.set_trace()
-        return get_score(board, board_stat)
-    """
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -394,14 +384,12 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         # our player's move
         score = max_play(cell, future_board, future_board_stat, depth+1, alpha, beta)
-        beta = min(beta, score)
-        if beta <= alpha:
-            return alpha
-            break
-        #if score < best_score:
-        #    best_score = score
+        best_score = min(best_score, score)
+        if best_score <= alpha:
+            return best_score
+        beta = min(beta, best_score)
 
-    return beta
+    return best_score
 
 def max_play(old_move, board, board_stat, depth, alpha, beta):
     if (depth >= 3):
@@ -409,14 +397,6 @@ def max_play(old_move, board, board_stat, depth, alpha, beta):
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
-    """
-    try:
-        best_move = cells[0]
-    except IndexError:
-        print "index error"
-        #pdb.set_trace()
-        return get_score(board, board_stat)
-    """
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -424,14 +404,12 @@ def max_play(old_move, board, board_stat, depth, alpha, beta):
         future_board = max_move(board_copy, cell)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         score = min_play(cell, future_board, future_board_stat, depth+1, alpha, beta)
-        alpha = max(alpha, score)
-        if beta <= alpha:
-            return beta
-            break
-        #if score > best_score:
-        #    best_score = score
+        best_score = max(best_score, score)
+        if best_score >= beta:
+            return best_score
+        alpha = max(alpha, best_score)
 
-    return alpha
+    return best_score
 
 def max_move(board, move):
     global flag
@@ -470,11 +448,11 @@ def update_my_config(move, old_move = None):
 
 def print_my_board():
     global my_board
-
     for bs in my_board:
-        for i in [0,3,6]: 
-            print bs[i] + " " + bs[i+1] + " " + bs[i+2] 
-        print 
+        print bs
+        #for i in [0,3,6]: 
+        #    print bs[i] + " " + bs[i+1] + " " + bs[i+2] 
+        #print 
 
 
 def get_my_block(block_number):
@@ -594,10 +572,6 @@ def get_block(block_number, board):
 
 def get_free_and_valid_blocks(old_move, game_stat):
     valid_blocks = get_valid_blocks(old_move)
-    #print "**********************"
-    #print valid_blocks
-    #print game_stat
-    #print "**********************"
     free_and_valid_blocks = []
 
     for block in valid_blocks:
@@ -656,11 +630,19 @@ def is_empty_cell(cell, block):
     index = (cell[0]*3) + cell[1]
     return block[index] == '-'
 
-def get_allowed_cells(blocks, board):
+def get_cached_block(block_number):
+    return my_board[block_number]
+
+def get_allowed_cells(blocks, board, actual = None):
     #print blocks
     allowed_cells = []
     for block in blocks:
+        #block_stat_1 = get_cached_block(block)
         block_stat = get_block(block, board)
+        #print "-------------------"
+        #print block_stat
+        #print block_stat_1
+        #print "-------------------"
         for i in range(3):
             for j in range(3):
                 if is_empty_cell((i,j), block_stat):
