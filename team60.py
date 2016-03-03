@@ -284,40 +284,40 @@ def minimax(old_move, board, board_stat, flag):
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
     best_move = cells[0]
-    #print "-----minimax--------------"
-    #print len(cells)
-    #print "-----minimax--------------"
+
+    alpha = float('-inf')
+    beta = float('inf')
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
 
         future_board = max_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         # other player's move
-        score = min_play(cell, future_board, future_board_stat, opp_flag, 0)
+        score = min_play(cell, future_board, future_board_stat, opp_flag, 0, alpha, beta)
+        alpha = max(alpha, score)
         if score > best_score:
             best_score = score
             best_move = cell
+        if beta <= alpha:
+            break
 
     return best_move
 
-def min_play(old_move, board, board_stat, flag, depth):
-    if (depth > 1):
-        #print "-------------Depth------------"
-        #print depth
-        #print "-------------Depth------------"
+def min_play(old_move, board, board_stat, flag, depth, alpha, beta):
+    if (depth > 3):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('inf')
-    #print "------------min_play----------------"
-    #print len(cells)
-    #print "------------min_play----------------"
+
+    """
     try:
         best_move = cells[0]
     except IndexError:
         print "index error"
         #pdb.set_trace()
         return get_score(board, board_stat)
+    """
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
@@ -325,39 +325,41 @@ def min_play(old_move, board, board_stat, flag, depth):
         future_board = min_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
         # our player's move
-        score = max_play(cell, future_board, future_board_stat, opp_flag, depth+1)
+        score = max_play(cell, future_board, future_board_stat, opp_flag, depth+1, alpha, beta)
+        beta = min(beta, score)
         if score < best_score:
             best_score = score
-            best_move = cell
+        if beta <= alpha:
+            break
 
     return best_score
 
-def max_play(old_move, board, board_stat, flag, depth):
-    if (depth > 2):
-        return get_score(board)
+def max_play(old_move, board, board_stat, flag, depth, alpha, beta):
+    #if (depth > 4):
+    #    return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
-    #print cells
     best_score = float('-inf')
-    #print "------------max_play----------------"
-    #print len(cells)
-    #print "------------max_play----------------"
+    """
     try:
         best_move = cells[0]
     except IndexError:
         print "index error"
         #pdb.set_trace()
         return get_score(board, board_stat)
+    """
 
     for cell in cells:
         board_copy, board_stat_copy = get_copy(board, board_stat)
 
         future_board = max_move(board_copy, cell, flag)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
-        score = min_play(cell, future_board, future_board_stat, opp_flag, depth+1)
+        score = min_play(cell, future_board, future_board_stat, opp_flag, depth+1, alpha, beta)
+        alpha = max(alpha, score)
         if score > best_score:
             best_score = score
-            best_move = cell
+        if beta <= alpha:
+            break
 
     return best_score
 
@@ -394,8 +396,6 @@ def update_my_config(move, old_move = None):
         my_board[block_number][index] = opp_flag
     
     print_my_board()
-    #for bl in my_board:
-    #    print bl
 
 
 def print_my_board():
@@ -420,7 +420,6 @@ def update_board_stat(board, board_stat, move):
     #print_block(block)
     #print_board_stat(board_stat)
 
-    #board_stat_new = copy.deepcopy(board_stat)
     board_stat_new = [ row[:] for row in board_stat ]
 
     new_flag = 0
