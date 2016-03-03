@@ -290,6 +290,7 @@ def get_copy(board, board_stat):
     return (board_copy, board_stat_copy)
 
 def minimax(old_move, board, board_stat):
+    global flag
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     cells = get_allowed_cells(allowed_blocks, board)
     best_score = float('-inf')
@@ -303,6 +304,9 @@ def minimax(old_move, board, board_stat):
 
         future_board = max_move(board_copy, cell)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        winner = terminal_state_winner(future_board_stat)
+        if winner == flag:
+            return cell
         # other player's move
         score = min_play(cell, future_board, future_board_stat, 0, alpha, beta)
         if score > best_score:
@@ -315,6 +319,8 @@ def minimax(old_move, board, board_stat):
 
 
 def min_play(old_move, board, board_stat, depth, alpha, beta):
+    global opp_flag
+    allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     if (depth >= 4):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
@@ -326,6 +332,9 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
 
         future_board = min_move(board_copy, cell)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        winner = terminal_state_winner(future_board_stat)
+        if winner == opp_flag:
+            return float('-inf')
         # our player's move
         score = max_play(cell, future_board, future_board_stat, depth+1, alpha, beta)
         best_score = min(best_score, score)
@@ -336,6 +345,8 @@ def min_play(old_move, board, board_stat, depth, alpha, beta):
     return best_score
 
 def max_play(old_move, board, board_stat, depth, alpha, beta):
+    global flag
+    allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
     if (depth > 3):
         return get_score(board, board_stat)
     allowed_blocks = get_free_and_valid_blocks(old_move, board_stat)
@@ -347,6 +358,9 @@ def max_play(old_move, board, board_stat, depth, alpha, beta):
 
         future_board = max_move(board_copy, cell)
         future_board_stat = update_board_stat(future_board, board_stat_copy, cell)
+        winner = terminal_state_winner(future_board_stat)
+        if winner == flag:
+            return float('inf')
         score = min_play(cell, future_board, future_board_stat, depth+1, alpha, beta)
         best_score = max(best_score, score)
         if best_score >= beta:
@@ -369,6 +383,33 @@ def min_move(board, move):
     y = move[1]
     board[x][y] = opp_flag
     return board
+
+def terminal_state_winner(board_stat):
+    global block_win_100, block_lost_100
+    global flag, opp_flag, no_flag
+    for i in [0,3,6]:
+        if block_stat[i:i+3] == block_win_100:
+            return flag
+        elif block_stat[i:i+3] == block_lost_100:
+            return opp_flag
+
+    for i in range(3):
+        if block_stat[i::i+3] == block_win_100:
+            return flag
+        elif block_stat[i::i+3] == block_lost_100:
+            return opp_flag
+    
+    if block_stat[0::4] == block_win_100:
+        return flag
+    elif block_stat[0::4] == block_lost_100:
+        return opp_flag
+
+    if block_stat[2:8:2] == block_win_100:
+        return flag
+    elif block_stat[2:8:2] == block_lost_100:
+        return opp_flag
+
+    return no_flag
 
 def update_board_stat(board, board_stat, move):
     # update board stat 
