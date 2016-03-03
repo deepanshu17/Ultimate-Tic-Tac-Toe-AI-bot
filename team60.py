@@ -337,7 +337,6 @@ def get_score(board, board_stat):
         elif ind == 13:
             final_score += 500
     
-    #print final_score
     return final_score
 
 
